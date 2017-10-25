@@ -5,8 +5,10 @@
 @IDE: PyCharm
 @project:Simple_distributed_crawler 
 """
-import pickle   # 存入什么类型数据,取出还是什么类型数据!  参考http://www.cnblogs.com/cobbliu/archive/2012/09/04/2670178.html
 import hashlib
+
+from control_node import pickle
+
 
 class URLManager(object):
 
@@ -47,7 +49,7 @@ class URLManager(object):
         self.old_urls.add(URLManager.md5_encrypt_16(new_url))
         return new_url
 
-    def add_url(self, url):
+    def _add_url(self, url):
         '''
         将url加入未爬取的urls
         :param url:
@@ -72,7 +74,7 @@ class URLManager(object):
         '''
         if not url:
             return
-        self.add_url(url)
+        self._add_url(url)
 
 
     def add_new_urls(self, urls):
@@ -88,7 +90,7 @@ class URLManager(object):
             # 获取的url为空则跳开
             if not url:
                 continue
-            self.add_url(url)
+            self._add_url(url)
 
     def new_url_size(self):
         '''
@@ -113,6 +115,7 @@ class URLManager(object):
         '''
         with open(path, 'wb') as f:
             pickle.dump(data, f)
+        print('写入文件成功')
 
     def load_progress(self, path):
         '''
@@ -121,28 +124,21 @@ class URLManager(object):
         :return:
         '''
         print('[+] 从文件加载进度:{}'.format(path))
-        f = open(path, 'rb')
+
         try:
+            f = open(path, 'rb')
             temp = pickle.load(f)
             f.close()
             return temp
         except Exception as error:
-            f.close()
+            # f.close()
             print('error----->', error)
             print('[!] 无文件进度,创建:{}'.format(path))
             return set()
 
 
 def main():
-    a = URLManager()
-    a.save_progress('new_urls.txt', set(['1', '2']))
-    urlmanager = URLManager()
-
-    urlmanager.add_new_url('aaa')
-    print(urlmanager.new_urls)
-    test_list = ['bbb', 'aaa', '', 'ccc', 'bbb']
-    urlmanager.add_new_urls(test_list)
-    print(urlmanager.new_urls)
+    pass
 
 if __name__ == '__main__':
     main()
